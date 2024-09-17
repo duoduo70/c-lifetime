@@ -15,4 +15,7 @@ int main() {
 }
 ```
 
+The memory requested by the `lftm_malloc` function will be automatically released at the end of its lifetime.   
+If it is not in a lifetime, the behavior is no different from that of ordinary `malloc`.
+
 Enjoy!
