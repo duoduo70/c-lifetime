@@ -16,11 +16,13 @@ struct PointerVLA {
         void **array;
 };
 
-static size_t lftm_hash(void *ptr, size_t mapsize) {
+static size_t lftm_hash(void *ptr, size_t mapsize)
+{
         return ((size_t)ptr / sizeof(size_t)) % mapsize;
 }
 
-static void **lftm_vla_init(size_t capacity) {
+static void **lftm_vla_init(size_t capacity)
+{
         struct PointerVLA *vla = malloc(sizeof(struct PointerVLA));
         vla->capacity = capacity;
         vla->len = 0;
@@ -28,7 +30,8 @@ static void **lftm_vla_init(size_t capacity) {
         return (void **)vla;
 }
 
-static void lftm_vla_insert(struct PointerVLA *vla, void *ptr) {
+static void lftm_vla_insert(struct PointerVLA *vla, void *ptr)
+{
         if (vla->len >= vla->capacity) {
                 vla->array = realloc(vla->array, vla->capacity << 2);
                 vla->capacity = vla->capacity << 2;
@@ -37,7 +40,8 @@ static void lftm_vla_insert(struct PointerVLA *vla, void *ptr) {
         vla->len++;
 }
 
-static void lftm_vla_export(struct PointerVLA *vla, void *ptr) {
+static void lftm_vla_export(struct PointerVLA *vla, void *ptr)
+{
         size_t idx = 0;
         while (idx < vla->len) {
                 if (vla->array[idx] == ptr) {
@@ -49,7 +53,8 @@ static void lftm_vla_export(struct PointerVLA *vla, void *ptr) {
         }
 }
 
-static void lftm_vla_foreach(struct PointerVLA *vla, void (*f)(void *)) {
+static void lftm_vla_foreach(struct PointerVLA *vla, void (*f)(void *))
+{
         size_t idx = 0;
         while (idx < vla->len) {
                 if (vla->array[idx] != NULL) {
@@ -59,7 +64,8 @@ static void lftm_vla_foreach(struct PointerVLA *vla, void (*f)(void *)) {
         }
 }
 
-static void lftm_vla_free(struct PointerVLA *vla) {
+static void lftm_vla_free(struct PointerVLA *vla)
+{
         size_t idx = 0;
         while (idx < vla->len) {
                 if (vla->array[idx] != NULL) {
@@ -73,7 +79,8 @@ static void lftm_vla_free(struct PointerVLA *vla) {
 }
 
 static struct PointerLinklistNode *
-lftm_linklist_insert(struct PointerLinklistNode *linklist, void *ptr) {
+lftm_linklist_insert(struct PointerLinklistNode *linklist, void *ptr)
+{
         if (linklist == NULL) {
                 linklist = malloc(sizeof(struct PointerLinklistNode));
                 linklist->ptr = ptr;
@@ -88,7 +95,8 @@ lftm_linklist_insert(struct PointerLinklistNode *linklist, void *ptr) {
 }
 
 static void lftm_linklist_foreach(struct PointerLinklistNode *linklist,
-                                  void (*f)(void *)) {
+                                  void (*f)(void *))
+{
         struct PointerLinklistNode *node = linklist;
 start:
         if (node != NULL) {
@@ -101,7 +109,8 @@ start:
 }
 
 static void lftm_linklist_export(struct PointerLinklistNode *linklist,
-                                 void *ptr) {
+                                 void *ptr)
+{
         struct PointerLinklistNode *node = linklist;
 start:
         if (node != NULL) {
@@ -114,7 +123,8 @@ start:
         }
 }
 
-static void lftm_linklist_free(struct PointerLinklistNode *linklist) {
+static void lftm_linklist_free(struct PointerLinklistNode *linklist)
+{
         struct PointerLinklistNode *node = linklist;
         struct PointerLinklistNode *next;
 start:
@@ -129,7 +139,8 @@ start:
 }
 
 static void lftm_hashmap_insert(struct PointerHashmapNode **hashmap,
-                                size_t mapsize, void *ptr) {
+                                size_t mapsize, void *ptr)
+{
         size_t idx = lftm_hash(ptr, mapsize);
 
         struct PointerHashmapNode *tmp =
@@ -141,7 +152,8 @@ static void lftm_hashmap_insert(struct PointerHashmapNode **hashmap,
 }
 
 static void lftm_hashmap_foreach(struct PointerHashmapNode **hashmap,
-                                 size_t size, void (*f)(void *)) {
+                                 size_t size, void (*f)(void *))
+{
         int i = 0;
         while (i < size) {
                 if (hashmap[i] != NULL && hashmap[i]->ptr != NULL) {
@@ -152,8 +164,8 @@ static void lftm_hashmap_foreach(struct PointerHashmapNode **hashmap,
         }
 }
 
-static void lftm_hashmap_free(struct PointerHashmapNode **hashmap,
-                              size_t size) {
+static void lftm_hashmap_free(struct PointerHashmapNode **hashmap, size_t size)
+{
         int i = 0;
         while (i < size) {
                 if (hashmap[i] != NULL) {
@@ -166,7 +178,8 @@ static void lftm_hashmap_free(struct PointerHashmapNode **hashmap,
 }
 
 static void lftm_hashmap_export(struct PointerHashmapNode **hashmap,
-                                size_t mapsize, void *ptr) {
+                                size_t mapsize, void *ptr)
+{
         size_t idx = lftm_hash(ptr, mapsize);
         struct PointerHashmapNode *tmp;
 
@@ -183,28 +196,32 @@ linklist_start:
         }
 }
 
-static struct PointerMap lftmmap_init_hashmap(size_t mapsize) {
+static struct PointerMap lftmmap_init_hashmap(size_t mapsize)
+{
         struct PointerMap map;
         map.hashmapsize = mapsize;
         map.map = calloc(mapsize, sizeof(size_t));
         return map;
 }
 
-static struct PointerMap lftmmap_init_linklist() {
+static struct PointerMap lftmmap_init_linklist()
+{
         struct PointerMap map;
         map.hashmapsize = 0;
         map.map = NULL;
         return map;
 }
 
-static struct PointerMap lftmmap_init_vla(size_t capacity) {
+static struct PointerMap lftmmap_init_vla(size_t capacity)
+{
         struct PointerMap map;
         map.hashmapsize = -1;
         map.map = lftm_vla_init(capacity);
         return map;
 }
 
-enum PointerMapType lftmmap_gettype(struct PointerMap *map) {
+enum PointerMapType lftmmap_gettype(struct PointerMap *map)
+{
         switch (map->hashmapsize) {
         case 0:
                 return LFTMMAP_TYPE_LINKLIST;
@@ -215,7 +232,8 @@ enum PointerMapType lftmmap_gettype(struct PointerMap *map) {
         }
 }
 
-void lftmmap_insert(struct PointerMap *map, void *ptr) {
+void lftmmap_insert(struct PointerMap *map, void *ptr)
+{
         switch (lftmmap_gettype(map)) {
         case LFTMMAP_TYPE_LINKLIST:
                 map->map = (void **)lftm_linklist_insert(
@@ -231,7 +249,8 @@ void lftmmap_insert(struct PointerMap *map, void *ptr) {
         }
 }
 
-void lftmmap_foreach(struct PointerMap *map, void (*f)(void *)) {
+void lftmmap_foreach(struct PointerMap *map, void (*f)(void *))
+{
         switch (lftmmap_gettype(map)) {
         case LFTMMAP_TYPE_LINKLIST:
                 lftm_linklist_foreach((struct PointerLinklistNode *)map->map,
@@ -247,17 +266,19 @@ void lftmmap_foreach(struct PointerMap *map, void (*f)(void *)) {
         }
 }
 
-struct PointerMap lftmmap_init(size_t maxsize) {
-        if (maxsize >= 32) {
-                return lftmmap_init_hashmap(maxsize >> 3);
-        } else if (maxsize >= 8) {
+struct PointerMap lftmmap_init(size_t maxsize)
+{
+        if (maxsize >= LFTMMAP_TYPE_HASHMAP) {
+                return lftmmap_init_hashmap(maxsize >> 2);
+        } else if (maxsize >= LFTMMAP_TYPE_LINKLIST) {
                 return lftmmap_init_linklist();
         } else {
                 return lftmmap_init_vla(maxsize);
         }
 }
 
-void lftmmap_free(struct PointerMap map) {
+void lftmmap_free(struct PointerMap map)
+{
         switch (lftmmap_gettype(&map)) {
         case LFTMMAP_TYPE_LINKLIST:
                 lftm_linklist_free((struct PointerLinklistNode *)map.map);
@@ -272,7 +293,8 @@ void lftmmap_free(struct PointerMap map) {
         }
 }
 
-void __lftmmap_export(struct PointerMap map, void *ptr) {
+void __lftmmap_export(struct PointerMap map, void *ptr)
+{
         switch (lftmmap_gettype(&map)) {
         case LFTMMAP_TYPE_LINKLIST:
                 lftm_linklist_export((struct PointerLinklistNode *)map.map,
@@ -295,14 +317,16 @@ struct LifetimeStack {
 
 static struct LifetimeStack *lifetime_stack;
 
-static void lftm_stack_push(struct PointerMap lifetime) {
+static void lftm_stack_push(struct PointerMap lifetime)
+{
         struct LifetimeStack *next = malloc(sizeof(struct LifetimeStack));
         next->lifetime = lifetime;
         next->prev = lifetime_stack;
         lifetime_stack = next;
 }
 
-static void lftm_stack_pop() {
+static void lftm_stack_pop()
+{
         struct LifetimeStack *prev = lifetime_stack->prev;
         lftmmap_free(lifetime_stack->lifetime);
         free(lifetime_stack);
@@ -311,7 +335,8 @@ static void lftm_stack_pop() {
 
 struct PointerMap lftm_stack_last() { return lifetime_stack->lifetime; }
 
-void *lftm_malloc(size_t size) {
+void *lftm_malloc(size_t size)
+{
         void *ptr = malloc(size);
         if (lifetime_stack != NULL)
                 lftmmap_insert(&lifetime_stack->lifetime, ptr);
