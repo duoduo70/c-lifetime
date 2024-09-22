@@ -20,6 +20,10 @@ enum PointerMapType {
         LFTMMAP_TYPE_VLA
 };
 
+#define LFTM_HASHMAP 32
+#define LFTM_LINKLIST 8
+#define LFTM_VLA 4
+
 struct PointerMap {
         size_t hashmapsize; // hashmapsize == 0 <==> typeof map == LINKLIST
                             // hashmapsize == -1 <==> typeof map == VLA
