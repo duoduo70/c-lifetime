@@ -7,8 +7,8 @@ For example:
 
 int main() {
         lftm(LFTM_VLA, {
-                void *mem1 = lftm_malloc(114514);
-                void *mem2 = lftm_malloc(114514);
+                void *mem1 = lftm_malloc(123);
+                void *mem2 = lftm_malloc(123);
                 lftm_export(mem1);
         })
         return 0;
