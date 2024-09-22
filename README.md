@@ -6,7 +6,7 @@ For example:
 #include "lifetime.h"
 
 int main() {
-        lftm(4, {
+        lftm(LFTM_VLA, {
                 void *mem1 = lftm_malloc(114514);
                 void *mem2 = lftm_malloc(114514);
                 lftm_export(mem1);
